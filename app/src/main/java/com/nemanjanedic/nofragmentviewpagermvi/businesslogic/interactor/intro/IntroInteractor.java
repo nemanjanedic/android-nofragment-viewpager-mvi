@@ -38,7 +38,7 @@ public class IntroInteractor {
     }
 
     public Observable<IntroViewState> continueToHome() {
-        return Observable.just(new IntroViewState.Continue());
+        return Observable.just(new IntroViewState.ContinueToHome());
     }
 
 }

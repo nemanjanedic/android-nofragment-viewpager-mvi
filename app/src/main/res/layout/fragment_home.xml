@@ -11,25 +11,25 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:text="@string/intro_third_page_title"
+        android:text="@string/home_title"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="@+id/content"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintTop_creator="1"
-        tools:text="Third page"/>
+        tools:text="Home"/>
 
-    <Button
-        android:id="@+id/continue_to_home"
-        style="@style/Widget.AppCompat.Button.Colored"
+    <TextView
+        android:id="@+id/greeting"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="@string/continue_to_home_button"
+        android:text="@string/home_greeting"
+        android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/section_label"
-        tools:text="Continue to home"/>
+        tools:text="Hello World!"/>
 
 </android.support.constraint.ConstraintLayout>

@@ -57,10 +57,10 @@ public interface IntroViewState {
         }
     }
 
-    final class Continue implements IntroViewState {
+    final class ContinueToHome implements IntroViewState {
         @Override
         public String toString() {
-            return "Continue{}";
+            return "ContinueToHome{}";
         }
     }
 

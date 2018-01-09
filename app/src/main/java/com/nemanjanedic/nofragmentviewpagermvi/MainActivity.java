@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.nemanjanedic.nofragmentviewpagermvi.presentation.home.HomeFragment;
 import com.nemanjanedic.nofragmentviewpagermvi.presentation.intro.IntroFragment;
 
 import butterknife.BindView;
@@ -35,6 +36,10 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.container, introFragment, "IntroFragment").commit();
     }
 
+    public void loadHome() {
+        HomeFragment homeFragment = HomeFragment.newInstance();
+        getSupportFragmentManager().beginTransaction().replace(R.id.container, homeFragment, "HomeFragment").commit();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

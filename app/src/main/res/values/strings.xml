@@ -5,4 +5,7 @@
     <string name="intro_first_page_title">First Page</string>
     <string name="intro_second_page_title">Second Page</string>
     <string name="intro_third_page_title">Third Page</string>
+    <string name="continue_to_home_button">Continue to home</string>
+    <string name="home_greeting">You are at home.</string>
+    <string name="home_title">Home</string>
 </resources>

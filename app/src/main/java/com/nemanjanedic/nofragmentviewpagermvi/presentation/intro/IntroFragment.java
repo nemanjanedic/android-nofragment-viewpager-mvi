@@ -3,6 +3,7 @@ package com.nemanjanedic.nofragmentviewpagermvi.presentation.intro;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,11 +11,10 @@ import android.view.ViewGroup;
 
 import com.hannesdorfmann.mosby3.mvi.MviFragment;
 import com.jakewharton.rxbinding2.support.v4.view.RxViewPager;
+import com.nemanjanedic.nofragmentviewpagermvi.MainActivity;
 import com.nemanjanedic.nofragmentviewpagermvi.MviApplication;
 import com.nemanjanedic.nofragmentviewpagermvi.R;
 import com.nemanjanedic.nofragmentviewpagermvi.businesslogic.interactor.intro.IntroViewState;
-
-import java.util.concurrent.TimeUnit;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -23,8 +23,11 @@ import io.reactivex.Observable;
 
 public class IntroFragment extends MviFragment<IntroView, IntroPresenter> implements IntroView {
 
+    public static final String LOADING = "Loading...";
     @BindView(R.id.intro_pager)
     ViewPager introPager;
+
+    private IntroPagerAdapter introPagerAdapter;
 
     private Unbinder unbinder;
 
@@ -42,13 +45,15 @@ public class IntroFragment extends MviFragment<IntroView, IntroPresenter> implem
         return MviApplication.getDependencyInjection(getActivity()).newIntroPresenter();
     }
 
+    @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_intro, container, false);
         unbinder = ButterKnife.bind(this, view);
 
-        introPager.setAdapter(new IntroPagerAdapter(getActivity()));
+        introPagerAdapter = new IntroPagerAdapter(getActivity());
+        introPager.setAdapter(introPagerAdapter);
 
         return view;
     }
@@ -76,11 +81,25 @@ public class IntroFragment extends MviFragment<IntroView, IntroPresenter> implem
 
     @Override
     public Observable<Object> continueToHomeIntent() {
-        return Observable.just(new Object()).delay(10, TimeUnit.SECONDS);
+        return introPagerAdapter.getContinueToHomeClicks();
     }
 
     @Override
     public void render(IntroViewState state) {
-        // to be implemented
+        if (state instanceof IntroViewState.LoadingFirstPage) {
+            introPagerAdapter.setFirstPageGreetingText(LOADING);
+        } else if (state instanceof IntroViewState.LoadedFirstPage) {
+            introPagerAdapter.setFirstPageGreetingText(((IntroViewState.LoadedFirstPage) state).getGreeting());
+        } else if (state instanceof IntroViewState.LoadingSecondPage) {
+            introPagerAdapter.setSecondPageGreetingText(LOADING);
+        } else if (state instanceof IntroViewState.LoadedSecondPage) {
+            introPagerAdapter.setSecondPageGreetingText(((IntroViewState.LoadedSecondPage) state).getGreeting());
+        } else if (state instanceof IntroViewState.ThirdPage) {
+            // nothing to do
+        } else if (state instanceof IntroViewState.ContinueToHome) {
+            // exit this MVI fragment and load another
+            // navigation in the app should be handled better, this is used only for simplicity of the sample
+            ((MainActivity) getActivity()).loadHome();
+        }
     }
 }

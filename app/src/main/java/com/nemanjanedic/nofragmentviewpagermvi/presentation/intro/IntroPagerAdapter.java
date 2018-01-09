@@ -10,11 +10,29 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.jakewharton.rxbinding2.view.RxView;
+import com.jakewharton.rxbinding2.widget.RxTextView;
+import com.jakewharton.rxrelay2.BehaviorRelay;
+import com.jakewharton.rxrelay2.PublishRelay;
+import com.jakewharton.rxrelay2.Relay;
 import com.nemanjanedic.nofragmentviewpagermvi.R;
+
+import io.reactivex.Observable;
+import io.reactivex.disposables.Disposable;
 
 public class IntroPagerAdapter extends PagerAdapter {
 
     private final Context context;
+
+    // Using BehaviorRelay here to be able to set the text of the text view when app is started
+    private Relay<String> firstPageGreetingText = BehaviorRelay.create();
+    private Disposable firstPageGreetingTextDisposable;
+
+    private Relay<String> secondPageGreetingText = PublishRelay.create();
+    private Disposable secondPageGreetingTextDisposable;
+
+    private Relay<Object> continueToHomeClicks = PublishRelay.create();
+    private Disposable continueToHomeClicksDisposable;
 
     public IntroPagerAdapter(Context context) {
         this.context = context;
@@ -27,12 +45,36 @@ public class IntroPagerAdapter extends PagerAdapter {
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(page.getLayoutResId(), container, false);
         container.addView(view);
+        switch (position) {
+            case 0:
+                firstPageGreetingTextDisposable = firstPageGreetingText.subscribe(RxTextView.text(view.findViewById(R.id.greeting)));
+                break;
+            case 1:
+                secondPageGreetingTextDisposable = secondPageGreetingText.subscribe(RxTextView.text(view.findViewById(R.id.greeting)));
+                break;
+            case 2:
+                continueToHomeClicksDisposable = RxView.clicks(view.findViewById(R.id.continue_to_home)).subscribe(continueToHomeClicks);
+                break;
+            default:
+        }
         return view;
     }
 
     @Override
     public void destroyItem(@NonNull ViewGroup container, int position, @NonNull Object object) {
         container.removeView((View) object);
+        switch (position) {
+            case 0:
+                firstPageGreetingTextDisposable.dispose();
+                break;
+            case 1:
+                secondPageGreetingTextDisposable.dispose();
+                break;
+            case 2:
+                continueToHomeClicksDisposable.dispose();
+                break;
+            default:
+        }
     }
 
     @Override
@@ -49,7 +91,19 @@ public class IntroPagerAdapter extends PagerAdapter {
     @Override
     public CharSequence getPageTitle(int position) {
         IntroPage page = IntroPage.values()[position];
-        return context.getString(page.titleResId);
+        return context.getString(page.getTitleResId());
+    }
+
+    public void setFirstPageGreetingText(String text) {
+        firstPageGreetingText.accept(text);
+    }
+
+    public void setSecondPageGreetingText(String text) {
+        secondPageGreetingText.accept(text);
+    }
+
+    public Observable<Object> getContinueToHomeClicks() {
+        return continueToHomeClicks;
     }
 
     public enum IntroPage {
